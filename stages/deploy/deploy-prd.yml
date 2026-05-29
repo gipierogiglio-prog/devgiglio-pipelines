@@ -1,0 +1,22 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Deploy_PRD
+    displayName: "🚀 Deploy (PRD)"
+    dependsOn: Deploy_HML
+    condition: succeeded()
+    jobs:
+      - job: DeployPrd
+        displayName: "Deploy to Production"
+        steps:
+          - template: ../templates/ghcr-login.yml
+          - bash: |
+              docker tag ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:prd
+              docker push ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:prd
+            displayName: "Push PRD tag"
+          - bash: |
+              echo "⚠️ PRODUCTION DEPLOY"
+              echo "Manual approval required before this stage"
+            displayName: "Deploy Production"
