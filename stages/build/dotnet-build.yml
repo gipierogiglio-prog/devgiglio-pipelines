@@ -1,0 +1,26 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Build
+    displayName: "🔨 Build & Validate (.NET)"
+    jobs:
+      - job: BuildJob
+        displayName: "Build + Security + Envs"
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: sdk
+              version: 8.x
+          - bash: |
+              dotnet restore
+              dotnet build --no-restore -c Release
+            displayName: "Build .NET"
+          - bash: |
+              docker build -t ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) .
+            displayName: "Build Docker Image"
+          - bash: |
+              echo "✅ Build successful for ${{ parameters.appName }}"
+              echo "Security scan placeholder"
+            displayName: "🔒 Security Scan & Env Setup"
