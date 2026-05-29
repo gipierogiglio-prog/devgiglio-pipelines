@@ -1,0 +1,17 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Test
+    displayName: "🧪 Tests"
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: TestJob
+        displayName: "Run Tests"
+        steps:
+          - bash: |
+              echo "Running tests for ${{ parameters.appName }}"
+              echo "Placeholder - implement npm test or jest here"
+            displayName: "Test Suite"
