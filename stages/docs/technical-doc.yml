@@ -1,0 +1,27 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Documentation
+    displayName: "📚 Technical Docs"
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: DocJob
+        displayName: "Generate Docs"
+        steps:
+          - bash: |
+              echo "## 📖 ${{ parameters.appName }}" > $(Build.ArtifactStagingDirectory)/README.md
+              echo "" >> $(Build.ArtifactStagingDirectory)/README.md
+              echo "- **Stack:** $(STACK)" >> $(Build.ArtifactStagingDirectory)/README.md
+              echo "- **Dependencies:** $(DEPENDENCIES)" >> $(Build.ArtifactStagingDirectory)/README.md
+              echo "- **Messaging:** $(MESSAGING)" >> $(Build.ArtifactStagingDirectory)/README.md
+              echo "- **Framework:** $(FRAMEWORK)" >> $(Build.ArtifactStagingDirectory)/README.md
+              echo "- **Build:** $(Build.BuildNumber)" >> $(Build.ArtifactStagingDirectory)/README.md
+            displayName: "Generate Technical Documentation"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: $(Build.ArtifactStagingDirectory)
+              ArtifactName: docs
+            displayName: "Publish Docs"
