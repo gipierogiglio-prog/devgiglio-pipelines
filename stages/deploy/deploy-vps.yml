@@ -1,0 +1,24 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Deploy_DEV
+    displayName: "🚀 Deploy (DEV)"
+    dependsOn: Test
+    condition: succeeded()
+    jobs:
+      - job: DeployJob
+        displayName: "Push & Deploy"
+        steps:
+          - template: ../templates/ghcr-login.yml
+          - bash: |
+              docker tag ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:latest
+              docker push ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:latest
+            displayName: "Push to GHCR"
+          - bash: |
+              cd /opt/devgiglio
+              docker compose rm -fsv ${{ parameters.appName }} 2>/dev/null || true
+              docker pull ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:latest
+              docker compose up -d --force-recreate ${{ parameters.appName }}
+            displayName: "Deploy to VPS"
