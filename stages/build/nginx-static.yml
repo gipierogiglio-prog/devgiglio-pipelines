@@ -1,0 +1,18 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Build
+    displayName: "🔨 Build & Validate (Static)"
+    jobs:
+      - job: BuildJob
+        displayName: "Build + Security + Envs"
+        steps:
+          - template: ../templates/ghcr-login.yml
+          - bash: |
+              docker build -t ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) .
+            displayName: "Build Docker Image"
+          - bash: |
+              echo "✅ Static build successful for ${{ parameters.appName }}"
+            displayName: "Build Validation"
