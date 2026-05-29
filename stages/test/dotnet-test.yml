@@ -1,0 +1,20 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Test
+    displayName: "🧪 Tests (.NET)"
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: TestJob
+        displayName: "Run Tests"
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: sdk
+              version: 8.x
+          - bash: |
+              dotnet test --no-build -c Release --logger trx
+            displayName: "dotnet test"
