@@ -1,0 +1,22 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Build
+    displayName: "🔨 Build & Validate"
+    jobs:
+      - job: BuildJob
+        displayName: "Build + Security + Envs"
+        steps:
+          - template: ../templates/ghcr-login.yml
+          - bash: |
+              docker build -t ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) .
+            displayName: "Build Docker Image"
+          - bash: |
+              echo "✅ Build successful for ${{ parameters.appName }}"
+            displayName: "Build Validation"
+          - bash: |
+              echo "Security scan placeholder - implement Trivy/Grype here"
+              echo "Env: $(APP_NAME)"
+            displayName: "🔒 Security Scan & Env Setup"
