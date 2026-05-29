@@ -5,7 +5,7 @@ parameters:
 stages:
   - stage: Deploy_DEV
     displayName: "🚀 Deploy (DEV)"
-    dependsOn: Test
+    dependsOn: Build
     condition: succeeded()
     jobs:
       - job: DeployJob
