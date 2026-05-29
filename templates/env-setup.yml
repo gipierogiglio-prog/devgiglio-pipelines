@@ -1,0 +1,10 @@
+parameters:
+- name: appName
+  type: string
+
+steps:
+  - bash: |
+      echo "Setting environment for ${{ parameters.appName }}"
+      echo "STACK: $(STACK)"
+      echo "APP_NAME: ${{ parameters.appName }}"
+    displayName: "Setup Environment"
