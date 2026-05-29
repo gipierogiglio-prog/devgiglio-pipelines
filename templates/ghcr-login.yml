@@ -1,0 +1,4 @@
+steps:
+  - bash: |
+      echo $(GITHUB_TOKEN) | docker login ghcr.io -u gipierogiglio-prog --password-stdin
+    displayName: "Login GHCR"
