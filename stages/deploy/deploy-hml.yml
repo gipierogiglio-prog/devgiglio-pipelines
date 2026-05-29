@@ -1,0 +1,25 @@
+parameters:
+- name: appName
+  type: string
+- name: environment
+  type: string
+  default: hml
+
+stages:
+  - stage: Deploy_HML
+    displayName: "🚀 Deploy (${{ parameters.environment }})"
+    dependsOn: Deploy_DEV
+    condition: succeeded()
+    jobs:
+      - job: DeployHml
+        displayName: "Deploy to ${{ parameters.environment }}"
+        steps:
+          - template: ../templates/ghcr-login.yml
+          - bash: |
+              docker tag ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:${{ parameters.environment }}
+              docker push ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:${{ parameters.environment }}
+            displayName: "Push ${{ parameters.environment }} tag"
+          - bash: |
+              echo "Deploy to ${{ parameters.environment }} environment"
+              echo "SSH into ${{ parameters.environment }} server and deploy"
+            displayName: "Deploy ${{ parameters.environment }}"
