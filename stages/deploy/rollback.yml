@@ -1,0 +1,24 @@
+parameters:
+- name: appName
+  type: string
+- name: environment
+  type: string
+  default: dev
+
+stages:
+  - stage: Rollback
+    displayName: "⏪ Rollback"
+    jobs:
+      - job: RollbackJob
+        displayName: "Rollback ${{ parameters.appName }} on ${{ parameters.environment }}"
+        steps:
+          - template: ../templates/ghcr-login.yml
+          - bash: |
+              echo "Available tags for rollback:"
+              curl -s -H "Authorization: token $(GITHUB_TOKEN)" "https://api.github.com/orgs/gipierogiglio-prog/packages/container/${{ parameters.appName }}/versions" | jq -r ".[].metadata.container.tags[]" | head -10
+            displayName: "List available tags"
+          - bash: |
+              echo "Rollback command:"
+              echo "docker pull ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:[TAG]"
+              echo "docker compose up -d --force-recreate ${{ parameters.appName }}"
+            displayName: "Execute Rollback (manual)"
