@@ -9,7 +9,7 @@ stages:
       - job: BuildJob
         displayName: "Build + Security + Envs"
         steps:
-          - template: ../templates/ghcr-login.yml
+          - template: ../../templates/ghcr-login.yml
           - bash: |
               docker build -t ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) .
             displayName: "Build Docker Image"
