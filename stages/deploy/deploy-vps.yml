@@ -11,7 +11,7 @@ stages:
       - job: DeployJob
         displayName: "Push & Deploy"
         steps:
-          - template: ../templates/ghcr-login.yml
+          - template: ../../templates/ghcr-login.yml
           - bash: |
               docker tag ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:latest
               docker push ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:latest
