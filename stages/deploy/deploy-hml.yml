@@ -14,7 +14,7 @@ stages:
       - job: DeployHml
         displayName: "Deploy to ${{ parameters.environment }}"
         steps:
-          - template: ../templates/ghcr-login.yml
+          - template: ../../templates/ghcr-login.yml
           - bash: |
               docker tag ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:${{ parameters.environment }}
               docker push ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:${{ parameters.environment }}
