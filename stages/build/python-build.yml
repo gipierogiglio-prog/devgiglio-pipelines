@@ -1,0 +1,20 @@
+parameters:
+- name: appName
+  type: string
+
+stages:
+  - stage: Build
+    displayName: "🔨 Build & Validate (Python)"
+    jobs:
+      - job: BuildJob
+        displayName: "Build + Lint + Security"
+        steps:
+          - bash: |
+              pip install -r requirements.txt
+              pip install flake8
+              flake8 . --count --max-complexity=10 --statistics || true
+            displayName: "Lint Python"
+          - template: ../templates/ghcr-login.yml
+          - bash: |
+              docker build -t ghcr.io/gipierogiglio-prog/${{ parameters.appName }}:build-$(Build.BuildId) .
+            displayName: "Build Docker Image"
